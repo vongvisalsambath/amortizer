@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <AssemblyName>Amortizer.Cli</AssemblyName>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>amortizer</ToolCommandName>
+    <PackageId>Amortizer.Cli</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Vong Visalsambath</Authors>
+    <Description>Command-line loan schedules: payments, interest, APR and the true cost of flat-rate loans.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Amortizer\Amortizer.csproj" />
+  </ItemGroup>
+</Project>

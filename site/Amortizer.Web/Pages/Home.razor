@@ -1,0 +1,157 @@
+@page "/"
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<section class="hero">
+  <h1>What does this loan <span class="hl">really</span> cost?</h1>
+  <p class="lead">Enter a loan as the lender quotes it. You'll see every payment, the total interest, and the true yearly cost: the APR and the effective annual rate. That last one is the number to compare loans by, especially when a rate is quoted <em>flat</em>.</p>
+</section>
+
+<div class="grid">
+  <form class="card form" @onsubmit:preventDefault aria-label="Loan">
+    <div class="row2">
+      <label>Amount borrowed
+        <input type="number" inputmode="decimal" min="0" step="any" @bind="amount" @bind:event="oninput" @bind:after="Recalc" />
+      </label>
+      <label>Currency
+        <select @bind="currency" @bind:after="Recalc">
+          @foreach (var c in Currencies) { <option value="@c.Key">@c.Key</option> }
+        </select>
+      </label>
+    </div>
+    <div class="row2">
+      <label>Interest rate (%)
+        <input type="number" inputmode="decimal" min="0" step="any" @bind="rate" @bind:event="oninput" @bind:after="Recalc" />
+      </label>
+      <label>Per
+        <select @bind="ratePer" @bind:after="Recalc"><option value="year">year</option><option value="month">month</option></select>
+      </label>
+    </div>
+    <div class="row2">
+      <label>Term
+        <input type="number" inputmode="numeric" min="1" step="1" @bind="term" @bind:event="oninput" @bind:after="Recalc" />
+      </label>
+      <label>&nbsp;
+        <select @bind="termUnit" @bind:after="Recalc"><option value="months">months</option><option value="years">years</option></select>
+      </label>
+    </div>
+    <label>How interest is charged
+      <select @bind="method" @bind:after="Recalc">
+        <option value="@Method.Annuity">Equal payments (declining balance)</option>
+        <option value="@Method.EqualPrincipal">Equal principal (payments fall)</option>
+        <option value="@Method.FlatRate">Flat rate (interest on the full amount)</option>
+        <option value="@Method.InterestOnly">Interest only, principal at the end</option>
+      </select>
+    </label>
+    <label>Payments
+      <select @bind="frequency" @bind:after="Recalc">
+        <option value="@Frequency.Monthly">Monthly</option><option value="@Frequency.Biweekly">Every two weeks</option>
+        <option value="@Frequency.Weekly">Weekly</option><option value="@Frequency.Quarterly">Quarterly</option>
+        <option value="@Frequency.SemiAnnual">Twice a year</option><option value="@Frequency.Annual">Yearly</option>
+      </select>
+    </label>
+
+    <details class="more">
+      <summary>More options</summary>
+      <div class="row2">
+        <label>Fees at the start
+          <input type="number" inputmode="decimal" min="0" step="any" @bind="fees" @bind:event="oninput" @bind:after="Recalc" />
+        </label>
+        <label>Grace payments
+          <input type="number" inputmode="numeric" min="0" step="1" @bind="grace" @bind:event="oninput" @bind:after="Recalc" />
+        </label>
+      </div>
+      <div class="row2">
+        <label>Money paid out
+          <input type="date" @bind="start" @bind:after="Recalc" />
+        </label>
+        <label>Day count
+          <select @bind="dayCount" @bind:after="Recalc">
+            <option value="@DayCount.Periodic">Equal periods</option><option value="@DayCount.Actual365Fixed">Actual/365</option>
+            <option value="@DayCount.Actual360">Actual/360</option><option value="@DayCount.ActualActual">Actual/Actual</option>
+            <option value="@DayCount.Thirty360">30/360</option><option value="@DayCount.Thirty360European">30E/360</option>
+          </select>
+        </label>
+      </div>
+      <fieldset class="extras">
+        <legend>Extra payments</legend>
+        @for (var i = 0; ExtrasApply && i < extras.Count; i++)
+        {
+            var x = extras[i];
+            <div class="extra">
+              <label>With payment <input type="number" min="1" step="1" @bind="x.Period" @bind:event="oninput" @bind:after="Recalc" /></label>
+              <label>Amount <input type="number" min="0" step="any" @bind="x.Amount" @bind:event="oninput" @bind:after="Recalc" /></label>
+              <button type="button" class="ghost" aria-label="Remove this extra payment" @onclick="() => { extras.Remove(x); Recalc(); }">Remove</button>
+            </div>
+        }
+        @if (!ExtrasApply)
+        {
+            <p class="hint">Extra payments only reduce the interest on a declining-balance loan (equal payments or equal principal).</p>
+        }
+        else if (extras.Count < MaxExtras)
+        {
+            <button type="button" class="ghost" @onclick="AddExtra">+ Add an extra payment</button>
+        }
+      </fieldset>
+    </details>
+  </form>
+
+  <section class="card results" aria-live="polite">
+    @if (problems.Count > 0)
+    {
+        <div class="problems" role="alert">
+          <strong>Check the loan details</strong>
+          <ul>@foreach (var p in problems) { <li>@p</li> }</ul>
+        </div>
+    }
+    else if (schedule is not null)
+    {
+        <div class="figures">
+          <div><span class="k">@(schedule.Terms.Method == Method.EqualPrincipal ? "First payment" : "Payment")</span><span class="v">@Money(schedule.RegularPayment)</span><span class="s">@FrequencyText, @schedule.Rows.Count payments</span></div>
+          <div><span class="k">Total interest</span><span class="v">@Money(schedule.TotalInterest)</span><span class="s">@Money(schedule.TotalPaid) paid in all</span></div>
+          <div class="truth"><span class="k">True yearly cost</span><span class="v">@Pct(schedule.EffectiveAnnualRate)</span><span class="s">APR @Pct(schedule.Apr)@(schedule.Terms.UpfrontFees > 0 ? ", fees included" : "")</span></div>
+        </div>
+
+        @if (schedule.Terms.Method == Method.FlatRate && compare is not null)
+        {
+            <p class="callout">A <b>@Pct(QuotedYearly) flat</b> rate costs as much as a <b>@Pct(schedule.Apr)</b> rate on a declining balance. At @Pct(QuotedYearly) on a declining balance, this loan would cost <b>@Money(compare.TotalInterest)</b> in interest instead of <b>@Money(schedule.TotalInterest)</b>.</p>
+        }
+
+        <figure class="chart" aria-label="What is owed over time">
+          <svg viewBox="0 0 600 180" preserveAspectRatio="none" role="img" aria-label="@($"Balance falls from {Money(schedule.Terms.Principal)} to zero by {schedule.PayoffDate:d MMM yyyy}.")">
+            @foreach (var b in bars)
+            {
+                <rect x="@F(b.X)" y="@F(180 - b.Interest - b.Principal)" width="@F(b.W)" height="@F(b.Principal)" class="bp" />
+                <rect x="@F(b.X)" y="@F(180 - b.Interest)" width="@F(b.W)" height="@F(b.Interest)" class="bi" />
+            }
+            <polyline points="@balanceLine" class="bal" />
+          </svg>
+          <figcaption><span class="sw bal"></span>What is owed <span class="sw bp"></span>Principal paid <span class="sw bi"></span>Interest paid</figcaption>
+        </figure>
+
+        <div class="actions">
+          <button type="button" @onclick="Download">Download CSV</button>
+          <button type="button" class="ghost" @onclick="CopyLink">@copyLabel</button>
+        </div>
+
+        <div class="table" role="table" aria-label="Every payment">
+          <div class="tr th" role="row"><span role="columnheader">#</span><span role="columnheader">Date</span><span role="columnheader">Interest</span><span role="columnheader">Principal</span><span role="columnheader">Payment</span><span role="columnheader">Owed after</span></div>
+          <div class="tbody">
+            <Virtualize Items="rowList" TItem="Row" ItemSize="34" Context="r">
+              <div class="tr" role="row"><span>@r.Number</span><span>@r.Date.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</span><span>@Num(r.Interest)</span><span>@Num(r.Principal)@(r.Extra > 0 ? " *" : "")</span><span>@Num(r.Payment)</span><span>@Num(r.ClosingBalance)</span></div>
+            </Virtualize>
+          </div>
+        </div>
+        @if (schedule.Rows.Any(r => r.Extra > 0)) { <p class="note">* includes an extra payment</p> }
+    }
+  </section>
+</div>
+
+<section class="explain">
+  <h2>Three ways to read a rate</h2>
+  <div class="cols">
+    <div><h3>Declining balance</h3><p>Interest is charged only on what you still owe, so it shrinks as you repay. Mortgages, most bank loans and car loans work this way.</p></div>
+    <div><h3>Flat rate</h3><p>Interest is charged on the full amount for the whole term, even though you repay part of it every month. "1.5% a month flat" sounds like 18% a year, but costs about 32%.</p></div>
+    <div><h3>APR and effective rate</h3><p>The APR turns any loan, fees included, into the declining-balance rate that costs the same. The effective rate adds compounding: what a year of the loan really costs. Compare loans by these.</p></div>
+  </div>
+</section>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Amortizer · What does this loan really cost?</title>
+  <meta name="description" content="A loan calculator that shows the true cost: payments, interest, APR and the effective annual rate, including what a flat-rate loan really costs. Runs in your browser; nothing is sent anywhere." />
+  <meta name="theme-color" content="#2271e3" />
+  <meta name="referrer" content="no-referrer" />
+  <base href="/" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/"><span class="logo" aria-hidden="true"></span>Amortizer</a>
+    <p class="tag">What does this loan really cost? Runs in your browser; nothing is sent anywhere.</p>
+    <nav><a href="https://github.com/vongvisalsambath/amortizer">GitHub</a></nav>
+  </header>
+  <main id="app">
+    <p class="loading">Loading the calculator…</p>
+    <noscript><p class="loading">The calculator needs JavaScript and WebAssembly.</p></noscript>
+  </main>
+  <div id="blazor-error-ui" role="alert">Something went wrong. <a href="/" class="reload">Reload</a></div>
+  <footer class="foot">
+    <span>Amortizer · open source (Apache-2.0) · by Vong Visalsambath</span>
+    <span>Figures are calculations, not an offer of credit. Check your lender's own schedule.</span>
+  </footer>
+  <script src="js/download.js"></script>
+  <script src="_framework/blazor.webassembly.js"></script>
+</body>
+</html>

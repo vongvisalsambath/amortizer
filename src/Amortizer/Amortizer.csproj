@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <PackageId>Amortizer</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Vong Visalsambath</Authors>
+    <Description>Loan schedules done exactly in .NET: annuity, equal-principal, interest-only and flat-rate loans, day-count conventions (30/360, ACT/360, ACT/365, ACT/ACT), grace periods, extra payments, fees, and the true annual cost (APR and effective annual rate). Decimal arithmetic throughout; every schedule adds up to the cent.</Description>
+    <PackageTags>loan;amortization;interest;apr;mortgage;microfinance;finance;banking</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/vongvisalsambath/amortizer</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+</Project>

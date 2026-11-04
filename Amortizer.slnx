@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/site/">
+    <Project Path="site/Amortizer.Web/Amortizer.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Amortizer.Cli/Amortizer.Cli.csproj" />
+    <Project Path="src/Amortizer/Amortizer.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Amortizer.Tests/Amortizer.Tests.csproj" />
+  </Folder>
+</Solution>
