@@ -16,6 +16,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/vongvisalsambath/amortizer</RepositoryUrl>
+    <PackageProjectUrl>https://amortizer-steel.vercel.app</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>

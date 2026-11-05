@@ -10,6 +10,9 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>amortizer</ToolCommandName>
     <PackageId>Amortizer.Cli</PackageId>
+    <PackageProjectUrl>https://amortizer-steel.vercel.app</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/vongvisalsambath/amortizer</RepositoryUrl>
     <Version>0.1.0</Version>
     <Authors>Vong Visalsambath</Authors>
     <Description>Command-line loan schedules: payments, interest, APR and the true cost of flat-rate loans.</Description>
@@ -17,5 +20,8 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Amortizer\Amortizer.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
   </ItemGroup>
 </Project>
