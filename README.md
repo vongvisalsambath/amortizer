@@ -6,6 +6,15 @@ What does this loan really cost? Amortizer builds a loan's full payment schedule
 
 It comes as a .NET library, an `amortizer` command and a website (`site/`) that runs entirely in the browser.
 
+## Install
+
+On NuGet: [Amortizer](https://www.nuget.org/packages/Amortizer) · [Amortizer.Cli](https://www.nuget.org/packages/Amortizer.Cli). For .NET 8 and .NET 10.
+
+```sh
+dotnet add package Amortizer
+dotnet tool install --global Amortizer.Cli   # the `amortizer` command
+```
+
 ## Why
 
 Many small loans, from microfinance to consumer and motorbike loans, are quoted at a *flat* rate: interest is charged on the full amount for the whole term, even as it's paid back. "1.5% a month" sounds like 18% a year. In fact it costs as much as **31.7% a year** on a declining balance, or **36.8%** compounded:
@@ -42,8 +51,6 @@ Amortizer shows that number for any loan, with every payment listed and every sc
   - Effective annual rate: the APR compounded over a year.
 
 ## .NET
-
-> Not on NuGet yet. Reference `src/Amortizer/Amortizer.csproj` (.NET 8 and 10).
 
 ```csharp
 using Amortizer;
