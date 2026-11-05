@@ -1,5 +1,7 @@
 # Amortizer
 
+**Website: [amortizer-steel.vercel.app](https://amortizer-steel.vercel.app)** · runs in your browser; nothing is uploaded.
+
 What does this loan really cost? Amortizer builds a loan's full payment schedule with exact decimal arithmetic and works out its true yearly cost: the APR and the effective annual rate.
 
 It comes as a .NET library, an `amortizer` command and a website (`site/`) that runs entirely in the browser.
